@@ -38,7 +38,6 @@ function initChrome() {
     ],
     showStatusLine: true,
   });
-  chrome.viewport.id = "app";
   chrome.viewport.innerHTML = `
     <section id="feeds-col" aria-label="Feeds">
       <header class="col-head">Feeds</header>
@@ -61,13 +60,15 @@ function initChrome() {
     </section>
   `;
 
-  const sl = chrome.statusLine!;
-  for (const id of ["status-name", "status-dirty", "status-refresh"]) {
-    const span = document.createElement("span");
-    span.id = id;
-    if (id === "status-dirty") span.setAttribute("aria-hidden", "true");
-    sl.appendChild(span);
-  }
+  // Status line: filename in info (left), refresh state in state (right).
+  // Dirty marker rides body[data-dirty="true"] as a `•` titlebar prefix.
+  const nameSpan = document.createElement("span");
+  nameSpan.id = "status-name";
+  chrome.statusInfo!.appendChild(nameSpan);
+
+  const refreshSpan = document.createElement("span");
+  refreshSpan.id = "status-refresh";
+  chrome.statusState!.appendChild(refreshSpan);
 }
 
 function updateStatus() {
@@ -83,8 +84,7 @@ function updateStatus() {
     : state.lastRefresh
       ? `last refresh ${state.lastRefresh.toLocaleTimeString()}`
       : "");
-  const dirty = document.getElementById("status-dirty");
-  if (dirty) dirty.dataset.dirty = state.dirty ? "true" : "false";
+  document.body.dataset.dirty = state.dirty ? "true" : "false";
 }
 
 function basename(path: string): string {

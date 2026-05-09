@@ -91,14 +91,11 @@
 
 html, body { font-family: var(--fm-sans); }
 
-body {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-}
+/* Body grid (titlebar / main / status) is owned by the package.
+ * rss-reader is a granted exception to the 2-pane convention — its inner
+ * 3-column layout (feeds / items / body) lives inside the main viewport. */
 
-/* Three-column layout */
-
-#app {
+#viewport {
   display: grid;
   grid-template-columns: var(--col-feeds-w) var(--col-items-w) 1fr;
   min-height: 0;
@@ -406,20 +403,4 @@ li.empty {
 }
 .link-btn:hover { color: var(--fm-accent-strong); }
 
-/* Status line */
-
-#status-line {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 4px 12px;
-  background: var(--fm-bg);
-  border-top: 1px solid var(--fm-rule);
-  color: var(--fm-muted);
-  font-size: 11px;
-  height: 22px;
-}
-#status-dirty[data-dirty="true"]::before {
-  content: "•";
-  color: var(--fm-accent);
-}
+/* Status line + dirty marker are package-owned. */
