@@ -19,6 +19,8 @@ import { renderBodyColumn, renderFeedsColumn, renderItemsColumn } from "./render
 import { loadSidecar } from "./sidecar";
 import { state, subscribe } from "./state";
 
+let titleEl: HTMLElement | null = null;
+
 function initChrome() {
   const chrome = mountChrome({
     productName: "RSS Reader",
@@ -38,6 +40,7 @@ function initChrome() {
     ],
     showStatusLine: true,
   });
+  titleEl = chrome.title;
   chrome.viewport.innerHTML = `
     <section id="feeds-col" aria-label="Feeds">
       <header class="col-head">Feeds</header>
@@ -76,9 +79,11 @@ function updateStatus() {
     const el = document.getElementById(id);
     if (el) el.textContent = v;
   };
-  set("status-name", state.opml
+  const fileName = state.opml
     ? (state.opml.path ? basename(state.opml.path) : `${state.opml.name} (unsaved)`)
-    : "no file");
+    : "";
+  set("status-name", fileName || "no file");
+  if (titleEl) titleEl.textContent = fileName;
   set("status-refresh", state.refreshing
     ? "refreshing…"
     : state.lastRefresh
