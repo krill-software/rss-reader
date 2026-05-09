@@ -4,7 +4,6 @@ import "./styles.css";
 import { mountChrome } from "@krill-software/desktop-ui";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getMatches } from "@tauri-apps/plugin-cli";
 
 import {
@@ -23,7 +22,20 @@ import { state, subscribe } from "./state";
 function initChrome() {
   const chrome = mountChrome({
     productName: "RSS Reader",
-    menus: [],
+    actions: {
+      "open":    openOpmlViaDialog,
+      "save":    () => void saveOpml(),
+      "save-as": () => void saveOpmlAs(),
+    },
+    customMenu: [
+      {
+        group: "file",
+        items: [
+          { label: "Add feed…", shortcut: "Ctrl+L", action: () => promptAddFeed() },
+          { label: "Refresh",   shortcut: "Ctrl+R", action: () => void refreshAll() },
+        ],
+      },
+    ],
     showStatusLine: true,
   });
   chrome.viewport.id = "app";
@@ -78,24 +90,6 @@ function updateStatus() {
 function basename(path: string): string {
   const i = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
   return i >= 0 ? path.slice(i + 1) : path;
-}
-
-function installKeybindings() {
-  window.addEventListener("keydown", (e) => {
-    if (isTextTarget(e.target)) return;
-    const mod = e.ctrlKey || e.metaKey;
-    if (mod && e.key.toLowerCase() === "o") { e.preventDefault(); void openOpmlViaDialog(); }
-    else if (mod && e.key.toLowerCase() === "s" && e.shiftKey) { e.preventDefault(); void saveOpmlAs(); }
-    else if (mod && e.key.toLowerCase() === "s") { e.preventDefault(); void saveOpml(); }
-    else if (mod && e.key.toLowerCase() === "l") { e.preventDefault(); promptAddFeed(); }
-    else if (mod && e.key.toLowerCase() === "r" && !e.shiftKey) { e.preventDefault(); void refreshAll(); }
-    else if (mod && e.key.toLowerCase() === "q") { e.preventDefault(); void getCurrentWindow().close(); }
-  }, { capture: true });
-}
-
-function isTextTarget(t: EventTarget | null): boolean {
-  if (!(t instanceof HTMLElement)) return false;
-  return t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable;
 }
 
 function promptAddFeed() {
@@ -154,7 +148,6 @@ async function installFileDrop() {
 
 async function boot() {
   initChrome();
-  installKeybindings();
   await installFileDrop();
   await loadSidecar();
 
