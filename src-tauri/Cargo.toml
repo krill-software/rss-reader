@@ -23,8 +23,9 @@ tauri-plugin-opener = "2"
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-dirs = "5"
+dirs = "5"   # used for default_opml_path (config_dir); state/fs helpers come from krill-desktop-core
 sha2 = "0.10"
+krill-desktop-core = { git = "https://github.com/krill-software/desktop-core", tag = "v0.1.0" }
 chrono = { version = "0.4", default-features = false, features = ["serde", "clock"] }
 
 # Feed fetching + parsing

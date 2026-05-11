@@ -1151,28 +1151,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582"
 
 [[package]]
-name = "krill-rss-reader"
-version = "0.1.0"
-dependencies = [
- "ammonia",
- "chrono",
- "dirs 5.0.1",
- "feed-rs",
- "opml",
- "reqwest 0.12.28",
- "serde",
- "serde_json",
- "sha2",
- "tauri",
- "tauri-build",
- "tauri-plugin-cli",
- "tauri-plugin-dialog",
- "tauri-plugin-fs",
- "tauri-plugin-opener",
- "tokio",
-]
-
-[[package]]
 name = "flate2"
 version = "1.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2192,6 +2170,39 @@ dependencies = [
  "bitflags 2.11.1",
  "serde",
  "unicode-segmentation",
+]
+
+[[package]]
+name = "krill-desktop-core"
+version = "0.1.0"
+source = "git+https://github.com/krill-software/desktop-core?tag=v0.1.0#d976e02818a1d110ea0526b150e6215bb4eeeb51"
+dependencies = [
+ "dirs 5.0.1",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "krill-rss-reader"
+version = "0.1.0"
+dependencies = [
+ "ammonia",
+ "chrono",
+ "dirs 5.0.1",
+ "feed-rs",
+ "krill-desktop-core",
+ "opml",
+ "reqwest 0.12.28",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-cli",
+ "tauri-plugin-dialog",
+ "tauri-plugin-fs",
+ "tauri-plugin-opener",
+ "tokio",
 ]
 
 [[package]]
