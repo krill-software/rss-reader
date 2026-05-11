@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@krill-software/desktop-ui':
-        specifier: github:krill-software/desktop-ui#v0.4.2
-        version: https://codeload.github.com/krill-software/desktop-ui/tar.gz/37f4e5d236a522712ebaaeb39e0375dc4663d799(@tauri-apps/api@2.10.1)
+        specifier: github:krill-software/desktop-ui#v0.4.3
+        version: https://codeload.github.com/krill-software/desktop-ui/tar.gz/4d3037967a05a354572fecab6d681b88e729c8c2(@tauri-apps/api@2.10.1)
       '@tauri-apps/api':
         specifier: ^2.1.1
         version: 2.10.1
@@ -177,9 +177,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@krill-software/desktop-ui@https://codeload.github.com/krill-software/desktop-ui/tar.gz/37f4e5d236a522712ebaaeb39e0375dc4663d799':
-    resolution: {tarball: https://codeload.github.com/krill-software/desktop-ui/tar.gz/37f4e5d236a522712ebaaeb39e0375dc4663d799}
-    version: 0.4.2
+  '@krill-software/desktop-ui@https://codeload.github.com/krill-software/desktop-ui/tar.gz/4d3037967a05a354572fecab6d681b88e729c8c2':
+    resolution: {tarball: https://codeload.github.com/krill-software/desktop-ui/tar.gz/4d3037967a05a354572fecab6d681b88e729c8c2}
+    version: 0.4.3
     peerDependencies:
       '@tauri-apps/api': ^2.0.0
 
@@ -553,7 +553,7 @@ snapshots:
   '@esbuild/win32-x64@0.21.5':
     optional: true
 
-  '@krill-software/desktop-ui@https://codeload.github.com/krill-software/desktop-ui/tar.gz/37f4e5d236a522712ebaaeb39e0375dc4663d799(@tauri-apps/api@2.10.1)':
+  '@krill-software/desktop-ui@https://codeload.github.com/krill-software/desktop-ui/tar.gz/4d3037967a05a354572fecab6d681b88e729c8c2(@tauri-apps/api@2.10.1)':
     dependencies:
       '@tauri-apps/api': 2.10.1
 

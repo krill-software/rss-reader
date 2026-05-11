@@ -63,12 +63,8 @@ function initChrome() {
     </section>
   `;
 
-  // Status line: filename in info (left), refresh state in state (right).
-  // Dirty marker rides body[data-dirty="true"] as a `•` titlebar prefix.
-  const nameSpan = document.createElement("span");
-  nameSpan.id = "status-name";
-  chrome.statusInfo!.appendChild(nameSpan);
-
+  // Status line: refresh state in state (right). Filename rides the titlebar;
+  // dirty marker rides body[data-dirty="true"] as the `•` titlebar prefix.
   const refreshSpan = document.createElement("span");
   refreshSpan.id = "status-refresh";
   chrome.statusState!.appendChild(refreshSpan);
@@ -82,7 +78,6 @@ function updateStatus() {
   const fileName = state.opml
     ? (state.opml.path ? basename(state.opml.path) : `${state.opml.name} (unsaved)`)
     : "";
-  set("status-name", fileName || "no file");
   if (titleEl) titleEl.textContent = fileName;
   set("status-refresh", state.refreshing
     ? "refreshing…"
