@@ -1,6 +1,6 @@
 [package]
 name = "krill-rss-reader"
-version = "0.1.0"
+version = "0.2.0"
 description = "A minimal RSS reader for Linux"
 authors = ["Filip"]
 edition = "2021"
@@ -20,12 +20,14 @@ tauri-plugin-dialog = "2"
 tauri-plugin-cli = "2"
 tauri-plugin-fs = "2"
 tauri-plugin-opener = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5"   # used for default_opml_path (config_dir); state/fs helpers come from krill-desktop-core
 sha2 = "0.10"
-krill-desktop-core = { git = "https://github.com/krill-software/desktop-core", tag = "v0.1.0" }
+krill-desktop-core = { git = "https://github.com/krill-software/desktop-core", tag = "v0.2.0" }
 chrono = { version = "0.4", default-features = false, features = ["serde", "clock"] }
 
 # Feed fetching + parsing

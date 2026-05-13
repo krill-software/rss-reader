@@ -9,7 +9,7 @@ use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
-use krill_desktop_core::{fs as kfs, state as kstate, dev as kdev};
+use krill_desktop_core::{fs as kfs, state as kstate, dev as kdev, updater::BuilderExt};
 
 const SLUG: &str = "krill-rss-reader";
 
@@ -506,6 +506,7 @@ fn dev_test_file() -> Option<String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .with_updater()
         .plugin(tauri_plugin_cli::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())

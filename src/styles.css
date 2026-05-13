@@ -85,11 +85,23 @@
   --fm-serif: "Charter", Georgia, "Liberation Serif", serif;
   --fm-mono:  "Hasklig", "Source Code Pro", "JetBrains Mono", ui-monospace, monospace;
 
+  --fm-selection: rgba(221, 117, 150, 0.22); /* alpha-derived from --fm-accent */
+
   --col-feeds-w: 200px;
   --col-items-w: 420px;
 }
 
-html, body { font-family: var(--fm-sans); }
+::selection {
+  background: var(--fm-selection);
+  text-shadow: none;
+}
+
+html, body {
+  font-family: var(--fm-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "calt" 1, "liga" 1;
+}
 
 /* Body grid (titlebar / main / status) is owned by the package.
  * rss-reader is a granted exception to the 2-pane convention — its inner
@@ -116,7 +128,7 @@ html, body { font-family: var(--fm-sans); }
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 14px;
   border-bottom: 1px solid var(--fm-rule);
-  font-size: 10.5px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--fm-muted);
@@ -138,77 +150,129 @@ ul#feeds-list, ul#items-list {
 
 /* Feeds column */
 
+/* Feed list — vertical menu.
+ * Row columns: [icon] [name] [unread count] [⋮ menu]. */
 .feed-row {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 14px 1fr auto 20px;
   align-items: center;
-  gap: 4px;
-  padding: 0 10px;
+  gap: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
 }
+.feed-row:hover { background: var(--fm-rule); }
 .feed-row[data-selected="true"] {
   background: var(--fm-rule-strong);
 }
-.feed-row[data-failing="true"] .feed-label {
+.feed-row[data-failing="true"] .feed-label-text {
   color: var(--fm-accent);
 }
 
 .feed-label {
+  display: contents;
   background: transparent;
   border: 0;
-  text-align: left;
   color: var(--fm-text);
-  font-size: 12.5px;
-  padding: 6px 4px;
+  font: inherit;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
 }
 .feed-icon {
+  position: relative;
   width: 14px;
   height: 14px;
-  flex: 0 0 14px;
+  display: inline-block;
+}
+.feed-icon-fallback {
+  width: 100%;
+  height: 100%;
+  color: var(--fm-muted);
+}
+.feed-icon-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
+  background: var(--fm-bg);
 }
 .feed-label-text {
+  justify-self: start;
+  text-align: left;
+  font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
+  width: 100%;
 }
 .feed-meta {
   font-family: var(--fm-mono);
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--fm-muted);
-  min-width: 22px;
-  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
-.feed-refresh {
+.feed-row[data-selected="true"] .feed-meta { color: var(--fm-text); }
+
+/* Kebab menu trigger — always visible, in its own column right of the count. */
+.feed-menu {
   background: transparent;
   border: 0;
   color: var(--fm-muted);
   cursor: pointer;
-  font-size: 12px;
-  padding: 4px;
+  width: 20px;
+  height: 20px;
   border-radius: 4px;
-  visibility: hidden;
-}
-.feed-row:hover .feed-refresh,
-.feed-row:hover .feed-remove { visibility: visible; }
-.feed-refresh:hover { color: var(--fm-text); background: var(--fm-rule); }
-.feed-remove {
-  background: transparent;
-  border: 0;
-  color: var(--fm-muted);
-  cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1;
-  padding: 2px 6px;
-  border-radius: 4px;
-  visibility: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
-.feed-remove:hover { color: var(--fm-text); background: var(--fm-rule); }
+.feed-menu:hover,
+.feed-menu[data-open] { color: var(--fm-text); background: var(--fm-rule-strong); }
+
+/* Floating action popup. Positioned absolutely against the viewport,
+ * pinned to the trigger's right edge. */
+.feed-menu-popup {
+  position: fixed;
+  z-index: 30;
+  min-width: 140px;
+  background: var(--fm-bg);
+  border: 1px solid var(--fm-rule-strong);
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(48, 52, 63, 0.16);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+}
+.feed-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  color: var(--fm-text);
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.feed-menu-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  color: var(--fm-muted);
+}
+.feed-menu-item:hover { background: var(--fm-rule); }
+.feed-menu-item:hover .feed-menu-icon { color: var(--fm-text); }
+.feed-menu-item[data-danger="true"] { color: var(--fm-accent); }
+.feed-menu-item[data-danger="true"] .feed-menu-icon { color: var(--fm-accent); }
+.feed-menu-item[data-danger="true"]:hover { background: var(--fm-accent); color: var(--fm-bg); }
+.feed-menu-item[data-danger="true"]:hover .feed-menu-icon { color: var(--fm-bg); }
 
 .add-feed-form {
   display: flex;
@@ -267,7 +331,7 @@ ul#feeds-list, ul#items-list {
 .item-meta {
   margin-top: 3px;
   font-family: var(--fm-mono);
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--fm-muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -345,10 +409,18 @@ li.empty {
 }
 #article .article-body a {
   color: var(--fm-accent);
-  text-decoration: none;
-  border-bottom: 1px solid var(--fm-rule-strong);
+  text-decoration: underline;
+  text-decoration-color: var(--fm-rule-strong);
+  text-decoration-thickness: 1px;
+  /* Skip descender crossings instead of repositioning the underline —
+   * keeps every line the same height regardless of whether it
+   * contains a link. */
+  text-decoration-skip-ink: auto;
 }
-#article .article-body a:hover { color: var(--fm-accent-strong); border-bottom-color: var(--fm-accent-strong); }
+#article .article-body a:hover {
+  color: var(--fm-accent-strong);
+  text-decoration-color: var(--fm-accent-strong);
+}
 #article .article-body code {
   font-family: var(--fm-mono);
   background: var(--fm-bg);
@@ -383,15 +455,18 @@ li.empty {
 
 .rail-btn {
   width: 100%;
-  background: var(--fm-bg);
-  border: 1px solid var(--fm-rule-strong);
-  color: var(--fm-text);
+  background: var(--fm-accent);
+  border: 0;
+  color: var(--fm-bg);
   border-radius: 5px;
   padding: 7px 10px;
-  font-size: 12.5px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   cursor: pointer;
+  transition: background 120ms ease;
 }
-.rail-btn:hover { background: var(--fm-rule); border-color: var(--fm-muted); }
+.rail-btn:hover { background: var(--fm-accent-strong); }
 
 .link-btn {
   background: transparent;
