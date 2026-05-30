@@ -64,8 +64,10 @@ function initChrome() {
     </section>
   `;
 
-  // Status line: refresh state in state (right). Filename rides the titlebar;
-  // dirty marker rides body[data-dirty="true"] as the `•` titlebar prefix.
+  // Status line: version on the left (static), refresh state on the right.
+  // Filename rides the titlebar; dirty marker rides body[data-dirty="true"]
+  // as the `•` titlebar prefix.
+  chrome.statusInfo!.textContent = `v${__APP_VERSION__}`;
   const refreshSpan = document.createElement("span");
   refreshSpan.id = "status-refresh";
   chrome.statusState!.appendChild(refreshSpan);
