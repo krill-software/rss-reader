@@ -1,312 +1,164 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RSS Reader — krill</title>
-    <meta name="description" content="A minimal three-column RSS / Atom reader for Linux. Local OPML, no accounts, no daemon, no cloud bridges." />
-    <meta property="og:title" content="RSS Reader — krill" />
-    <meta property="og:description" content="A three-column reader for the OPML you already have. No daemon, no cloud." />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="https://krill-software.github.io/chrome.css" />
-    <style>
-      /* App-specific styles only — shared chrome lives in
-       * https://krill-software.github.io/chrome.css. */
+---
+layout: app
+tagline: a calm three-column RSS / Atom reader for Linux
+description: A minimal three-column RSS / Atom reader for Linux. Local OPML, no accounts, no daemon, no cloud bridges.
+og_description: A three-column reader for the OPML you already have. No daemon, no cloud.
+eyebrow: An RSS / Atom reader for Linux
+heading: "OPML in, articles <em>out</em>."
+lede: A three-column reader for the feeds you already have. Local OPML, no accounts, no daemon, no cloud bridges. Subscribe quietly.
+features_heading: Built for the OPML you already have.
+features:
+  - tag: Three columns
+    title: Feeds, items, article
+    blurb: The reader shape that worked in 2005 and still works. All three visible at once; no back buttons.
+  - tag: .opml in / out
+    title: Your file, your subscriptions
+    blurb: One OPML file per window. Round-trips with NetNewsWire, Feedly, miniflux — take it elsewhere any time.
+  - tag: RSS · Atom · JSON Feed
+    title: One reader, every format
+    blurb: feed-rs under the hood, so the parser doesn't care which dialect the feed speaks.
+  - tag: ETag · Last-Modified
+    title: Polite fetching
+    blurb: 304s on unchanged feeds. No re-parsing what already arrived. 15s timeout, no redirect loops.
+  - tag: Sanitized HTML
+    title: Article bodies render, scripts don't
+    blurb: ammonia strips inline JS, iframes, on-handlers. The feed's text + images + links, nothing else.
+  - tag: Tauri · Rust
+    title: Native Linux
+    blurb: Small binary, AppImage and .deb, real file associations, in-app updater. No Electron.
+principles_heading: What this isn't.
+principles:
+  - strong: No accounts, no cloud.
+    span: Your subscriptions live in an OPML on your disk. There's nothing to log into.
+  - strong: No daemon.
+    span: Closed app, zero network activity. Feeds refresh on launch or when you ask.
+  - strong: No bridges.
+    span: Fever, Greader, Inoreader, Miniflux APIs — none. Standard OPML and HTTP, nothing else.
+  - strong: No smart folders.
+    span: No filtering rules, no "read later" integrations. Read it or don't.
+extension: ".opml"
+---
+<style>
+  .rr-three-col {
+    display: grid;
+    grid-template-columns: 180px 280px 1fr;
+    min-height: 360px;
+  }
+  .rr-col {
+    padding: 14px 14px 18px;
+    border-right: 1px solid var(--rule);
+    font-family: var(--sans);
+    font-size: 13px;
+  }
+  .rr-col:last-child { border-right: none; }
+  .rr-col .rr-col-head {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
 
-      .preview-frame {
-        margin: 48px 0 0;
-        border: 1px solid var(--rule-strong);
-        border-radius: 12px;
-        overflow: hidden;
-        background: var(--bg);
-        box-shadow:
-          0 30px 60px -30px rgba(48, 52, 63, 0.18),
-          0 8px 20px -10px rgba(48, 52, 63, 0.08);
-      }
+  .rr-feed { display: flex; align-items: center; gap: 8px; padding: 6px 0; color: var(--ink); }
+  .rr-feed.active { color: var(--accent); }
+  .rr-feed .rr-count { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .rr-feed.active .rr-count { color: var(--accent); }
 
-      .titlebar {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 16px;
-        border-bottom: 1px solid var(--rule);
-        font-family: var(--mono);
-        font-size: 12px;
-        color: var(--muted);
-      }
-      .titlebar .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--rule-strong); }
-      .titlebar .dot.red { background: #e8a5a5; }
-      .titlebar .dot.amber { background: #e8cfa5; }
-      .titlebar .dot.green { background: #a5d4b2; }
-      .titlebar .title { margin-left: 12px; color: var(--ink); }
+  .rr-item { padding: 10px 0; border-bottom: 1px dashed var(--rule); }
+  .rr-item:last-child { border-bottom: none; }
+  .rr-item .rr-row1 { display: flex; align-items: center; gap: 8px; color: var(--ink); }
+  .rr-item.unread .rr-row1::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0;
+  }
+  .rr-item.read .rr-row1::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: transparent; flex-shrink: 0;
+  }
+  .rr-item.read .rr-row1 { color: var(--muted); }
+  .rr-item .rr-row1 .rr-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rr-item .rr-row2 {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    padding-left: 14px;
+  }
+  .rr-item.selected { background: rgba(221, 117, 150, 0.06); margin: 0 -14px; padding: 10px 14px; }
 
-      .three-col {
-        display: grid;
-        grid-template-columns: 180px 280px 1fr;
-        min-height: 360px;
-      }
-      .col {
-        padding: 14px 14px 18px;
-        border-right: 1px solid var(--rule);
-        font-family: var(--sans);
-        font-size: 13px;
-      }
-      .col:last-child { border-right: none; }
-      .col .col-head {
-        font-family: var(--mono);
-        font-size: 11px;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-bottom: 10px;
-      }
+  .rr-article {
+    padding: 8px 0 0;
+    font-family: var(--serif);
+  }
+  .rr-article h3 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 18px;
+    margin: 0 0 6px;
+    color: var(--ink);
+  }
+  .rr-article .rr-byline {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .rr-article p {
+    margin: 0 0 12px;
+    line-height: 1.55;
+    font-size: 14px;
+    color: var(--ink);
+    opacity: 0.85;
+  }
 
-      .feed { display: flex; align-items: center; gap: 8px; padding: 6px 0; color: var(--ink); }
-      .feed.active { color: var(--accent); }
-      .feed .count { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-      .feed.active .count { color: var(--accent); }
-
-      .item { padding: 10px 0; border-bottom: 1px dashed var(--rule); }
-      .item:last-child { border-bottom: none; }
-      .item .row1 { display: flex; align-items: center; gap: 8px; color: var(--ink); }
-      .item.unread .row1::before {
-        content: ""; width: 6px; height: 6px; border-radius: 50%;
-        background: var(--accent); flex-shrink: 0;
-      }
-      .item.read .row1::before {
-        content: ""; width: 6px; height: 6px; border-radius: 50%;
-        background: transparent; flex-shrink: 0;
-      }
-      .item.read .row1 { color: var(--muted); }
-      .item .row1 .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .item .row2 {
-        font-family: var(--mono);
-        font-size: 11px;
-        color: var(--muted);
-        margin-top: 4px;
-        padding-left: 14px;
-      }
-      .item.selected { background: rgba(221, 117, 150, 0.06); margin: 0 -14px; padding: 10px 14px; }
-
-      .article {
-        padding: 8px 0 0;
-        font-family: var(--serif);
-      }
-      .article h3 {
-        font-family: var(--serif);
-        font-weight: 600;
-        font-size: 18px;
-        margin: 0 0 6px;
-        color: var(--ink);
-      }
-      .article .byline {
-        font-family: var(--mono);
-        font-size: 11px;
-        color: var(--muted);
-        margin-bottom: 14px;
-      }
-      .article p {
-        margin: 0 0 12px;
-        line-height: 1.55;
-        font-size: 14px;
-        color: var(--ink);
-        opacity: 0.85;
-      }
-
-      @media (max-width: 720px) {
-        .three-col { grid-template-columns: 120px 1fr; }
-        .three-col .col:last-child { display: none; }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <nav class="top">
-        <div class="brand">krill / rss-reader</div>
-        <ul>
-          <li><a href="#features">Features</a></li>
-          <li><a href="#principles">Principles</a></li>
-          <li><a href="#install">Install</a></li>
-          <li><a href="https://github.com/krill-software/rss-reader">GitHub</a></li>
-        </ul>
-      </nav>
-
-      <header class="hero">
-        <div class="eyebrow">An RSS / Atom reader for Linux</div>
-        <h1>OPML in, articles <em>out</em>.</h1>
-        <p class="lede">
-          A three-column reader for the feeds you already have. Local OPML,
-          no accounts, no daemon, no cloud bridges. Subscribe quietly.
-        </p>
-        <div class="cta">
-          <a
-            class="btn btn-primary"
-            href="https://github.com/krill-software/rss-reader/releases/download/v0.2.1/RSS.Reader_0.2.1_amd64.AppImage"
-          >
-            Download AppImage
-          </a>
-          <a
-            class="btn btn-secondary"
-            href="https://github.com/krill-software/rss-reader/releases/download/v0.2.1/RSS.Reader_0.2.1_amd64.deb"
-          >
-            .deb for Ubuntu / Debian
-          </a>
-        </div>
-        <div class="meta">
-          <strong>v0.2.1</strong> · Linux x86_64 · Free &amp; open source
-        </div>
-
-        <div class="preview-frame">
-          <div class="titlebar">
-            <span class="dot red"></span>
-            <span class="dot amber"></span>
-            <span class="dot green"></span>
-            <span class="title">subscriptions.opml</span>
-          </div>
-          <div class="three-col">
-            <div class="col">
-              <div class="col-head">Feeds</div>
-              <div class="feed"><span>⟳</span><span>All</span><span class="count">12</span></div>
-              <div class="feed active"><span>⟳</span><span>Daring Fireball</span><span class="count">4</span></div>
-              <div class="feed"><span>⟳</span><span>Hacker News</span><span class="count">5</span></div>
-              <div class="feed"><span>⟳</span><span>NASA Image</span><span class="count">1</span></div>
-              <div class="feed"><span>⟳</span><span>Pluralistic</span><span class="count">2</span></div>
-            </div>
-            <div class="col">
-              <div class="col-head">Items · Daring Fireball</div>
-              <div class="item unread selected">
-                <div class="row1"><span class="title">On writing well in a hurry</span></div>
-                <div class="row2">May 23 · daringfireball</div>
-              </div>
-              <div class="item unread">
-                <div class="row1"><span class="title">ELIZA, redux</span></div>
-                <div class="row2">May 22 · daringfireball</div>
-              </div>
-              <div class="item read">
-                <div class="row1"><span class="title">Friday notes</span></div>
-                <div class="row2">May 19 · daringfireball</div>
-              </div>
-              <div class="item read">
-                <div class="row1"><span class="title">A small note on RSS</span></div>
-                <div class="row2">May 17 · daringfireball</div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="article">
-                <h3>On writing well in a hurry</h3>
-                <div class="byline">John Gruber · May 23, 2026 · open original ↗</div>
-                <p>Good prose is clear before it is clever. Delete the middle of every sentence and see if it still stands.</p>
-                <p>If a reader's eye drifts mid-paragraph, it isn't the reader's fault — the paragraph asked too much.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <section id="features">
-        <div class="section-label">Features</div>
-        <h2>Built for the OPML you already have.</h2>
-        <div class="features">
-          <div class="feature">
-            <div class="tag">Three columns</div>
-            <h3>Feeds → items → article</h3>
-            <p>The reader shape that worked in 2005 and still works. All three visible at once; no back buttons.</p>
-          </div>
-          <div class="feature">
-            <div class="tag">.opml in / out</div>
-            <h3>Your file, your subscriptions</h3>
-            <p>One OPML file per window. Round-trips with NetNewsWire, Feedly, miniflux — take it elsewhere any time.</p>
-          </div>
-          <div class="feature">
-            <div class="tag">RSS · Atom · JSON Feed</div>
-            <h3>One reader, every format</h3>
-            <p>feed-rs under the hood, so the parser doesn't care which dialect the feed speaks.</p>
-          </div>
-          <div class="feature">
-            <div class="tag">ETag · Last-Modified</div>
-            <h3>Polite fetching</h3>
-            <p>304s on unchanged feeds. No re-parsing what already arrived. 15s timeout, no redirect loops.</p>
-          </div>
-          <div class="feature">
-            <div class="tag">Sanitized HTML</div>
-            <h3>Article bodies render, scripts don't</h3>
-            <p>ammonia strips inline JS, iframes, on-handlers. The feed's text + images + links, nothing else.</p>
-          </div>
-          <div class="feature">
-            <div class="tag">Tauri · Rust</div>
-            <h3>Native Linux</h3>
-            <p>Small binary, AppImage and .deb, real file associations, in-app updater. No Electron.</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="principles">
-        <div class="section-label">Principles</div>
-        <h2>What this isn't.</h2>
-        <div class="principles">
-          <div class="principle">
-            <strong>No accounts, no cloud.</strong>
-            <span>Your subscriptions live in an OPML on your disk. There's nothing to log into.</span>
-          </div>
-          <div class="principle">
-            <strong>No daemon.</strong>
-            <span>Closed app, zero network activity. Feeds refresh on launch or when you ask.</span>
-          </div>
-          <div class="principle">
-            <strong>No bridges.</strong>
-            <span>Fever, Greader, Inoreader, Miniflux APIs — none. Standard OPML and HTTP, nothing else.</span>
-          </div>
-          <div class="principle">
-            <strong>No smart folders.</strong>
-            <span>No filtering rules, no "read later" integrations. Read it or don't.</span>
-          </div>
-        </div>
-      </section>
-
-      <section id="install">
-        <div class="section-label">Install</div>
-        <h2>Two files. One minute.</h2>
-        <div class="install">
-          <div class="install-copy">
-            <p>
-              Both formats ship the same binary and register
-              <span style="font-family: var(--mono); color: var(--ink)">.opml</span>
-              as an associated file type so opens land in this app by default.
-            </p>
-            <p style="margin-top: 20px">
-              Or build from source:
-              <span style="font-family: var(--mono); color: var(--ink)">pnpm install &amp;&amp; pnpm tauri build</span>.
-            </p>
-          </div>
-          <div class="install-box">
-            <h3>AppImage · any Linux</h3>
-<pre><span class="c"># download</span>
-curl -LO https://github.com/krill-software/rss-reader/releases/download/v0.2.1/RSS.Reader_0.2.1_amd64.AppImage
-
-<span class="c"># make executable &amp; run</span>
-chmod +x RSS.Reader_0.2.1_amd64.AppImage
-./RSS.Reader_0.2.1_amd64.AppImage feeds.opml</pre>
-
-            <hr />
-
-            <h3>Debian / Ubuntu</h3>
-<pre>sudo dpkg -i RSS.Reader_0.2.1_amd64.deb
-krill-rss-reader feeds.opml</pre>
-          </div>
-        </div>
-      </section>
-
-      <footer>
-        <div>© krill · MIT licensed · No tracking, no accounts</div>
-        <div>
-          <a href="https://github.com/krill-software/rss-reader">Source on GitHub</a>
-          &nbsp;·&nbsp;
-          <a href="https://github.com/krill-software/rss-reader/issues">Report an issue</a>
-        </div>
-      </footer>
+  @media (max-width: 720px) {
+    .rr-three-col { grid-template-columns: 120px 1fr; }
+    .rr-three-col .rr-col:last-child { display: none; }
+  }
+</style>
+<div class="pv-titlebar">
+  <span class="title">subscriptions.opml</span>
+  <span class="winbtns">─ ▢ ✕</span>
+</div>
+<div class="rr-three-col">
+  <div class="rr-col">
+    <div class="rr-col-head">Feeds</div>
+    <div class="rr-feed"><span>⟳</span><span>All</span><span class="rr-count">12</span></div>
+    <div class="rr-feed active"><span>⟳</span><span>Daring Fireball</span><span class="rr-count">4</span></div>
+    <div class="rr-feed"><span>⟳</span><span>Hacker News</span><span class="rr-count">5</span></div>
+    <div class="rr-feed"><span>⟳</span><span>NASA Image</span><span class="rr-count">1</span></div>
+    <div class="rr-feed"><span>⟳</span><span>Pluralistic</span><span class="rr-count">2</span></div>
+  </div>
+  <div class="rr-col">
+    <div class="rr-col-head">Items · Daring Fireball</div>
+    <div class="rr-item unread selected">
+      <div class="rr-row1"><span class="rr-title">On writing well in a hurry</span></div>
+      <div class="rr-row2">May 23 · daringfireball</div>
     </div>
-  </body>
-</html>
+    <div class="rr-item unread">
+      <div class="rr-row1"><span class="rr-title">ELIZA, redux</span></div>
+      <div class="rr-row2">May 22 · daringfireball</div>
+    </div>
+    <div class="rr-item read">
+      <div class="rr-row1"><span class="rr-title">Friday notes</span></div>
+      <div class="rr-row2">May 19 · daringfireball</div>
+    </div>
+    <div class="rr-item read">
+      <div class="rr-row1"><span class="rr-title">A small note on RSS</span></div>
+      <div class="rr-row2">May 17 · daringfireball</div>
+    </div>
+  </div>
+  <div class="rr-col">
+    <div class="rr-article">
+      <h3>On writing well in a hurry</h3>
+      <div class="rr-byline">John Gruber · May 23, 2026 · open original ↗</div>
+      <p>Good prose is clear before it is clever. Delete the middle of every sentence and see if it still stands.</p>
+      <p>If a reader's eye drifts mid-paragraph, it isn't the reader's fault — the paragraph asked too much.</p>
+    </div>
+  </div>
+</div>
+<div class="pv-status">
+  <span>subscriptions.opml</span>
+  <span>12 feeds · 4 unread</span>
+</div>
