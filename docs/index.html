@@ -27,6 +27,9 @@ features:
     title: Native Linux
     blurb: Small binary, AppImage and .deb, real file associations, in-app updater. No Electron.
 extension: ".opml"
+mock:
+  filename: subscriptions.opml
+  state: '12 feeds · 4 unread'
 ---
 <style>
   .rr-three-col {
@@ -107,10 +110,6 @@ extension: ".opml"
     .rr-three-col .rr-col:last-child { display: none; }
   }
 </style>
-<div class="pv-titlebar">
-  <span class="title">subscriptions.opml</span>
-  <span class="winbtns">─ ▢ ✕</span>
-</div>
 <div class="rr-three-col">
   <div class="rr-col">
     <div class="rr-col-head">Feeds</div>
@@ -147,8 +146,4 @@ extension: ".opml"
       <p>If a reader's eye drifts mid-paragraph, it isn't the reader's fault — the paragraph asked too much.</p>
     </div>
   </div>
-</div>
-<div class="pv-status">
-  <span>v0.2.1</span>
-  <span>12 feeds · 4 unread</span>
 </div>
