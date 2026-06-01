@@ -13,10 +13,10 @@
     "windows": [
       {
         "title": "RSS Reader",
-        "width": 1280,
+        "width": 1296,
         "height": 800,
-        "minWidth": 760,
-        "minHeight": 480,
+        "minWidth": 720,
+        "minHeight": 445,
         "decorations": false,
         "resizable": true,
         "center": true,
@@ -48,7 +48,10 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["deb", "appimage"],
+    "targets": [
+      "deb",
+      "appimage"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -60,7 +63,9 @@
     "longDescription": "A minimal RSS / Atom reader for Linux. One OPML file per window. Three columns. No accounts, no daemon, no cloud.",
     "fileAssociations": [
       {
-        "ext": ["opml"],
+        "ext": [
+          "opml"
+        ],
         "name": "OPML subscription list",
         "description": "OPML subscription list",
         "mimeType": "text/x-opml",
