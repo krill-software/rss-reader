@@ -1,91 +1,15 @@
-@font-face {
-  font-family: "Hasklig";
-  font-weight: 400;
-  font-style: normal;
-  font-display: block;
-  src: url("/src/assets/fonts/Hasklig-Regular.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Hasklig";
-  font-weight: 700;
-  font-style: normal;
-  font-display: block;
-  src: url("/src/assets/fonts/Hasklig-Bold.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Hasklig";
-  font-weight: 400;
-  font-style: italic;
-  font-display: block;
-  src: url("/src/assets/fonts/Hasklig-Italic.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Hasklig";
-  font-weight: 700;
-  font-style: italic;
-  font-display: block;
-  src: url("/src/assets/fonts/Hasklig-BoldItalic.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Charter";
-  font-weight: 400;
-  font-style: normal;
-  font-display: block;
-  src: url("/src/assets/fonts/Charter-Regular.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Charter";
-  font-weight: 700;
-  font-style: normal;
-  font-display: block;
-  src: url("/src/assets/fonts/Charter-Bold.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Charter";
-  font-weight: 400;
-  font-style: italic;
-  font-display: block;
-  src: url("/src/assets/fonts/Charter-Italic.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Charter";
-  font-weight: 700;
-  font-style: italic;
-  font-display: block;
-  src: url("/src/assets/fonts/Charter-BoldItalic.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Inter";
-  font-weight: 400;
-  font-style: normal;
-  font-display: block;
-  src: url("/src/assets/fonts/Inter-Regular.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Inter";
-  font-weight: 600;
-  font-style: normal;
-  font-display: block;
-  src: url("/src/assets/fonts/Inter-SemiBold.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Inter";
-  font-weight: 700;
-  font-style: normal;
-  font-display: block;
-  src: url("/src/assets/fonts/Inter-Bold.woff2") format("woff2");
-}
-
-/* Rss-reader app-specific tokens. The 5 named palette colors and
- * Space-Cadet alpha rules come from @krill-software/desktop-ui. */
+/* Rss-reader app-specific tokens. The 5 named palette colors, the
+ * Space-Cadet alpha rules, and the font families (Inter / Charter /
+ * JetBrains Mono via --fm-sans/serif/mono) all come from
+ * @krill-software/desktop-ui — fonts are bundled there, no local
+ * @font-face needed. */
 :root {
-  --fm-sans:  "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --fm-serif: "Charter", Georgia, "Liberation Serif", serif;
-  --fm-mono:  "Hasklig", "Source Code Pro", "JetBrains Mono", ui-monospace, monospace;
-
-  --fm-selection: rgba(221, 117, 150, 0.22); /* alpha-derived from --fm-accent */
+  --fm-selection: rgba(
+    221,
+    117,
+    150,
+    0.22
+  ); /* alpha-derived from --fm-accent */
 
   --col-feeds-w: 200px;
   --col-items-w: 420px;
@@ -96,11 +20,14 @@
   text-shadow: none;
 }
 
-html, body {
+html,
+body {
   font-family: var(--fm-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: "calt" 1, "liga" 1;
+  font-feature-settings:
+    "calt" 1,
+    "liga" 1;
 }
 
 /* Body grid (titlebar / main / status) is owned by the package.
@@ -113,19 +40,31 @@ html, body {
   min-height: 0;
 }
 
-#feeds-col, #items-col, #body-col {
+#feeds-col,
+#items-col,
+#body-col {
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
 }
 
-#feeds-col { background: var(--fm-bg); border-right: 1px solid var(--fm-rule); }
-#items-col { background: var(--fm-bg); border-right: 1px solid var(--fm-rule); }
-#body-col  { background: var(--fm-bg); }
+#feeds-col {
+  background: var(--fm-bg);
+  border-right: 1px solid var(--fm-rule);
+}
+#items-col {
+  background: var(--fm-bg);
+  border-right: 1px solid var(--fm-rule);
+}
+#body-col {
+  background: var(--fm-bg);
+}
 
 .col-head {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 10px 14px;
   border-bottom: 1px solid var(--fm-rule);
   font-size: 11px;
@@ -139,7 +78,8 @@ html, body {
   padding: 8px 10px;
 }
 
-ul#feeds-list, ul#items-list {
+ul#feeds-list,
+ul#items-list {
   list-style: none;
   margin: 0;
   padding: 6px 0;
@@ -160,7 +100,9 @@ ul#feeds-list, ul#items-list {
   padding: 6px 12px;
   cursor: pointer;
 }
-.feed-row:hover { background: var(--fm-rule); }
+.feed-row:hover {
+  background: var(--fm-rule);
+}
 .feed-row[data-selected="true"] {
   background: var(--fm-rule-strong);
 }
@@ -211,7 +153,9 @@ ul#feeds-list, ul#items-list {
   color: var(--fm-muted);
   font-variant-numeric: tabular-nums;
 }
-.feed-row[data-selected="true"] .feed-meta { color: var(--fm-text); }
+.feed-row[data-selected="true"] .feed-meta {
+  color: var(--fm-text);
+}
 
 /* Kebab menu trigger — always visible, in its own column right of the count. */
 .feed-menu {
@@ -230,7 +174,10 @@ ul#feeds-list, ul#items-list {
   padding: 0;
 }
 .feed-menu:hover,
-.feed-menu[data-open] { color: var(--fm-text); background: var(--fm-rule-strong); }
+.feed-menu[data-open] {
+  color: var(--fm-text);
+  background: var(--fm-rule-strong);
+}
 
 /* Floating action popup. Positioned absolutely against the viewport,
  * pinned to the trigger's right edge. */
@@ -267,12 +214,25 @@ ul#feeds-list, ul#items-list {
   flex: 0 0 14px;
   color: var(--fm-muted);
 }
-.feed-menu-item:hover { background: var(--fm-rule); }
-.feed-menu-item:hover .feed-menu-icon { color: var(--fm-text); }
-.feed-menu-item[data-danger="true"] { color: var(--fm-accent); }
-.feed-menu-item[data-danger="true"] .feed-menu-icon { color: var(--fm-accent); }
-.feed-menu-item[data-danger="true"]:hover { background: var(--fm-accent); color: var(--fm-bg); }
-.feed-menu-item[data-danger="true"]:hover .feed-menu-icon { color: var(--fm-bg); }
+.feed-menu-item:hover {
+  background: var(--fm-rule);
+}
+.feed-menu-item:hover .feed-menu-icon {
+  color: var(--fm-text);
+}
+.feed-menu-item[data-danger="true"] {
+  color: var(--fm-accent);
+}
+.feed-menu-item[data-danger="true"] .feed-menu-icon {
+  color: var(--fm-accent);
+}
+.feed-menu-item[data-danger="true"]:hover {
+  background: var(--fm-accent);
+  color: var(--fm-bg);
+}
+.feed-menu-item[data-danger="true"]:hover .feed-menu-icon {
+  color: var(--fm-bg);
+}
 
 .add-feed-form {
   display: flex;
@@ -288,8 +248,14 @@ ul#feeds-list, ul#items-list {
   padding: 4px 6px;
   font: inherit;
 }
-.add-feed-form input:focus { outline: none; border-color: var(--fm-accent); }
-.add-feed-row { display: flex; gap: 6px; }
+.add-feed-form input:focus {
+  outline: none;
+  border-color: var(--fm-accent);
+}
+.add-feed-row {
+  display: flex;
+  gap: 6px;
+}
 .add-feed-error {
   color: var(--fm-accent);
   font-size: 11px;
@@ -306,21 +272,33 @@ ul#feeds-list, ul#items-list {
   border-bottom: 1px solid var(--fm-rule);
   cursor: pointer;
 }
-.item-row:hover { background: var(--fm-rule); }
+.item-row:hover {
+  background: var(--fm-rule);
+}
 .item-row[data-selected="true"] {
   background: var(--fm-rule-strong);
 }
-.item-row:focus { outline: 1px solid var(--fm-accent); outline-offset: -1px; }
+.item-row:focus {
+  outline: 1px solid var(--fm-accent);
+  outline-offset: -1px;
+}
 
 .item-dot {
-  width: 6px; height: 6px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--fm-accent);
   margin-top: 6px;
 }
-.item-row[data-read="true"] .item-dot { background: transparent; }
-.item-row[data-read="true"] .item-title { color: var(--fm-muted); }
-.item-row[data-read="true"] .item-meta { color: var(--fm-muted); }
+.item-row[data-read="true"] .item-dot {
+  background: transparent;
+}
+.item-row[data-read="true"] .item-title {
+  color: var(--fm-muted);
+}
+.item-row[data-read="true"] .item-meta {
+  color: var(--fm-muted);
+}
 
 .item-title {
   font-size: 13px;
@@ -350,8 +328,13 @@ li.empty {
 #body-col {
   user-select: text;
 }
-#body-col { overflow: auto; scrollbar-width: none; }
-#body-col::-webkit-scrollbar { display: none; }
+#body-col {
+  overflow: auto;
+  scrollbar-width: none;
+}
+#body-col::-webkit-scrollbar {
+  display: none;
+}
 #article {
   padding: 36px 48px 60px;
   max-width: 72ch;
@@ -377,7 +360,10 @@ li.empty {
   color: var(--fm-accent);
   text-decoration: none;
 }
-#article .article-meta a:hover { color: var(--fm-accent-strong); text-decoration: underline; }
+#article .article-meta a:hover {
+  color: var(--fm-accent-strong);
+  text-decoration: underline;
+}
 
 #article .article-body {
   font-family: var(--fm-serif);
@@ -385,7 +371,9 @@ li.empty {
   font-size: 16px;
   color: var(--fm-text);
 }
-#article .article-body p { margin: 0 0 16px; }
+#article .article-body p {
+  margin: 0 0 16px;
+}
 #article .article-body h1,
 #article .article-body h2,
 #article .article-body h3 {
@@ -445,7 +433,8 @@ li.empty {
   border-collapse: collapse;
   margin-bottom: 16px;
 }
-#article .article-body td, #article .article-body th {
+#article .article-body td,
+#article .article-body th {
   border: 1px solid var(--fm-rule);
   padding: 6px 10px;
   text-align: left;
@@ -466,7 +455,9 @@ li.empty {
   cursor: pointer;
   transition: background 120ms ease;
 }
-.rail-btn:hover { background: var(--fm-accent-strong); }
+.rail-btn:hover {
+  background: var(--fm-accent-strong);
+}
 
 .link-btn {
   background: transparent;
@@ -476,6 +467,8 @@ li.empty {
   font-size: 11px;
   cursor: pointer;
 }
-.link-btn:hover { color: var(--fm-accent-strong); }
+.link-btn:hover {
+  color: var(--fm-accent-strong);
+}
 
 /* Status line + dirty marker are package-owned. */
