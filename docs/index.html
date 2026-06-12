@@ -29,7 +29,7 @@ features:
 extension: ".opml"
 mock:
   filename: subscriptions.opml
-  state: '12 feeds · 4 unread'
+  state: 'last refresh 14:32'
 ---
 <style>
   .rr-three-col {
@@ -45,6 +45,9 @@ mock:
   }
   .rr-col:last-child { border-right: none; }
   .rr-col .rr-col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-family: var(--mono);
     font-size: 11px;
     color: var(--muted);
@@ -52,11 +55,47 @@ mock:
     letter-spacing: 0.08em;
     margin-bottom: 10px;
   }
+  .rr-col-head .rr-mark-read { color: var(--accent); }
+
+  .rr-col.rr-feeds { display: flex; flex-direction: column; padding-bottom: 0; }
+  .rr-feeds .rr-feed-list { flex: 1; }
+  .rr-col .col-foot {
+    margin: 12px -14px 0;
+    padding: 8px 10px;
+    border-top: 1px solid var(--rule);
+  }
+  .rr-col .rail-btn {
+    display: block;
+    width: 100%;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 5px;
+    padding: 7px 10px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-align: center;
+  }
 
   .rr-feed { display: flex; align-items: center; gap: 8px; padding: 6px 0; color: var(--ink); }
   .rr-feed.active { color: var(--accent); }
+  .rr-feed .rr-favicon {
+    width: 14px; height: 14px; flex-shrink: 0;
+    border-radius: 3px;
+    background: var(--rule-strong);
+    color: var(--muted);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .rr-feed .rr-favicon svg { width: 9px; height: 9px; display: block; }
   .rr-feed .rr-count { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--muted); }
   .rr-feed.active .rr-count { color: var(--accent); }
+  .rr-feed .rr-kebab {
+    width: 16px; flex-shrink: 0;
+    color: var(--muted);
+    font-size: 14px; line-height: 1;
+    text-align: center;
+  }
 
   .rr-item { padding: 10px 0; border-bottom: 1px dashed var(--rule); }
   .rr-item:last-child { border-bottom: none; }
@@ -111,37 +150,40 @@ mock:
   }
 </style>
 <div class="rr-three-col">
-  <div class="rr-col">
+  <div class="rr-col rr-feeds">
     <div class="rr-col-head">Feeds</div>
-    <div class="rr-feed"><span>⟳</span><span>All</span><span class="rr-count">12</span></div>
-    <div class="rr-feed active"><span>⟳</span><span>Daring Fireball</span><span class="rr-count">4</span></div>
-    <div class="rr-feed"><span>⟳</span><span>Hacker News</span><span class="rr-count">5</span></div>
-    <div class="rr-feed"><span>⟳</span><span>NASA Image</span><span class="rr-count">1</span></div>
-    <div class="rr-feed"><span>⟳</span><span>Pluralistic</span><span class="rr-count">2</span></div>
+    <div class="rr-feed-list">
+      <div class="rr-feed"><span>All</span><span class="rr-count">12</span><span class="rr-kebab"></span></div>
+      <div class="rr-feed active"><span class="rr-favicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.5"/></svg></span><span>Daring Fireball</span><span class="rr-count">4</span><span class="rr-kebab">⋮</span></div>
+      <div class="rr-feed"><span class="rr-favicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.5"/></svg></span><span>Hacker News</span><span class="rr-count">5</span><span class="rr-kebab">⋮</span></div>
+      <div class="rr-feed"><span class="rr-favicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.5"/></svg></span><span>NASA Image</span><span class="rr-count">1</span><span class="rr-kebab">⋮</span></div>
+      <div class="rr-feed"><span class="rr-favicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.5"/></svg></span><span>Pluralistic</span><span class="rr-count">2</span><span class="rr-kebab">⋮</span></div>
+    </div>
+    <div class="col-foot"><span class="rail-btn">+ Add feed</span></div>
   </div>
   <div class="rr-col">
-    <div class="rr-col-head">Items · Daring Fireball</div>
+    <div class="rr-col-head"><span>Daring Fireball</span><span class="rr-mark-read">Mark all read</span></div>
     <div class="rr-item unread selected">
       <div class="rr-row1"><span class="rr-title">On writing well in a hurry</span></div>
-      <div class="rr-row2">May 23 · daringfireball</div>
+      <div class="rr-row2">May 23 · Daring Fireball</div>
     </div>
     <div class="rr-item unread">
       <div class="rr-row1"><span class="rr-title">ELIZA, redux</span></div>
-      <div class="rr-row2">May 22 · daringfireball</div>
+      <div class="rr-row2">May 22 · Daring Fireball</div>
     </div>
     <div class="rr-item read">
       <div class="rr-row1"><span class="rr-title">Friday notes</span></div>
-      <div class="rr-row2">May 19 · daringfireball</div>
+      <div class="rr-row2">May 19 · Daring Fireball</div>
     </div>
     <div class="rr-item read">
       <div class="rr-row1"><span class="rr-title">A small note on RSS</span></div>
-      <div class="rr-row2">May 17 · daringfireball</div>
+      <div class="rr-row2">May 17 · Daring Fireball</div>
     </div>
   </div>
   <div class="rr-col">
     <div class="rr-article">
       <h3>On writing well in a hurry</h3>
-      <div class="rr-byline">John Gruber · May 23, 2026 · open original ↗</div>
+      <div class="rr-byline">John Gruber · May 23, 2026 · open original</div>
       <p>Good prose is clear before it is clever. Delete the middle of every sentence and see if it still stands.</p>
       <p>If a reader's eye drifts mid-paragraph, it isn't the reader's fault — the paragraph asked too much.</p>
     </div>
